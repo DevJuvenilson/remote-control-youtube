@@ -78,55 +78,42 @@ while cap.isOpened():
             
             total_dedos = contar_dedos(hand_landmarks)
 
-            # Só avalia se já passou o tempo de espera do último comando executado
             if tempo_atual - ultimo_comando > tempo_espera:
-                
-                # Se mudou de gesto ou acabou de começar um novo
+
                 if total_dedos != gesto_estavel:
                     gesto_estavel = total_dedos
                     tempo_inicio_gesto = tempo_atual
                     texto_status = f"Estabilizando ({total_dedos} dedos)..."
-                
-                # Se está mantendo o MESMO gesto
+
                 else:
                     tempo_segurado = tempo_atual - tempo_inicio_gesto
 
-                    # Se já segurou o tempo necessário com 100% de certeza
                     if tempo_segurado >= tempo_confirmacao:
-                        
-                        # ✋ 5 Dedos = Play / Pause
+
                         if total_dedos == 5:
                             pyautogui.press('k')
                             texto_status = "CONFIRMADO: Play / Pause"
-                        
-                        # ☝️ 1 Dedo = Avançar 10s
+
                         elif total_dedos == 1:
                             pyautogui.press('l')
                             texto_status = "CONFIRMADO: Avançar 10s"
-                        
-                        # ✌️ 2 Dedos = Voltar 10s
+
                         elif total_dedos == 2:
                             pyautogui.press('j')
                             texto_status = "CONFIRMADO: Voltar 10s"
-                        
-                        # 🤟 3 Dedos = Próximo Vídeo
+
                         elif total_dedos == 3:
                             pyautogui.hotkey('shift', 'n')
                             texto_status = "CONFIRMADO: Proximo Video"
 
-                        # Reseta o gesto e grava o horário da execução
                         ultimo_comando = tempo_atual
                         gesto_estavel = None
-                    
                     else:
-                        # Exibe o progresso de carregamento do gesto
                         progresso = int((tempo_segurado / tempo_confirmacao) * 100)
                         texto_status = f"Confirmando ({total_dedos} dedos): {progresso}%"
     else:
-        # Se nenhuma mão for detectada, reseta a trava do gesto
         gesto_estavel = None
 
-    # Exibe o texto de status na tela
     cv2.putText(frame, texto_status, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
     cv2.imshow('Controle por Gestos - YouTube', frame)
 
