@@ -21,13 +21,11 @@ hands = mp_hands.Hands(
 def contar_dedos(hand_landmarks):
     dedos = []
 
-    # Polegar
     if hand_landmarks.landmark[4].x < hand_landmarks.landmark[3].x:
         dedos.append(1)
     else:
         dedos.append(0)
 
-    # Outros 4 dedos
     pontas = [8, 12, 16, 20]
     bases = [6, 10, 14, 18]
 
